@@ -1,0 +1,3 @@
+{
+    "body": "{\"employee_id\":\"EMP001\",\"evaluation_date\":\"2024-03-01\",\"evaluator_id\":\"EMP002\",\"evaluation_items\":[{\"evaluation_item_id\":\"59de5dbb-371e-4e34-94ca-44a4dcd87fae\",\"score\":4,\"comment\":\"非常に良い評価です\"}]}"
+} 

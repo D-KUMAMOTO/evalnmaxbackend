@@ -1,0 +1,6 @@
+{
+    "pathParameters": {
+        "feedback_id": "FB001"
+    },
+    "body": "{\"feedback_content\":\"具体的な改善点を挙げて、より良い評価を目指しましょう\"}"
+} 

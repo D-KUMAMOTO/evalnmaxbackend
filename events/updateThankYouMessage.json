@@ -1,0 +1,6 @@
+{
+    "pathParameters": {
+        "message_id": "MSG001"
+    },
+    "body": "{\"message_content\":\"ご指導ありがとうございます。より一層努力いたします\"}"
+} 

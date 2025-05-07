@@ -1,0 +1,6 @@
+{
+    "pathParameters": {
+        "evaluation_id": "EVAL001"
+    },
+    "body": "{\"evaluation_items\":[{\"evaluation_item_id\":\"59de5dbb-371e-4e34-94ca-44a4dcd87fae\",\"score\":5,\"comment\":\"最高の評価です\"}]}"
+} 
