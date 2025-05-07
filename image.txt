@@ -1,0 +1,67 @@
+evalnmax/
+├── package.json
+├── tsconfig.json
+├── jest.config.ts
+├── src/
+│   ├── handlers/              # Lambda関数（APIエンドポイント毎）
+│   │   ├── employees/
+│   │   │   ├── getEmployee.ts
+│   │   │   ├── createEmployee.ts
+│   │   │   └── updateEmployee.ts
+│   │   │
+│   │   ├── evaluationItems/
+│   │   │   ├── listEvaluationItems.ts
+│   │   │   ├── createEvaluationItem.ts
+│   │   │   └── updateEvaluationItem.ts
+│   │   │
+│   │   ├── evaluations/
+│   │   │   ├── listEvaluations.ts
+│   │   │   ├── createEvaluation.ts
+│   │   │   └── updateEvaluation.ts
+│   │   │
+│   │   ├── thankYouMessages/
+│   │   │   ├── listThankYouMessages.ts
+│   │   │   ├── createThankYouMessage.ts
+│   │   │   └── updateThankYouMessage.ts
+│   │   │
+│   │   └── feedbackResults/
+│   │       ├── listFeedbackResults.ts
+│   │       ├── createFeedbackResult.ts
+│   │       └── updateFeedbackResult.ts
+│   │
+│   ├── libs/                  # 共通ライブラリ（ビジネスロジックを共通化）
+│   │   ├── dynamoClient.ts      # DynamoDB共通クライアント
+│   │   ├── response.ts          # APIレスポンス共通処理
+│   │   ├── error.ts             # 共通エラー定義
+│   │   ├── auth.ts              # 認証処理（Cognito/JWT）
+│   │   └── validation.ts        # 入力バリデーション共通処理
+│   │
+│   ├── schemas/               # リクエスト・レスポンスのJSONスキーマ
+│   │   ├── employeeSchema.ts
+│   │   ├── evaluationItemSchema.ts
+│   │   ├── evaluationSchema.ts
+│   │   ├── thankYouMessageSchema.ts
+│   │   └── feedbackResultSchema.ts
+│   │
+│   ├── types/                 # 型定義（TypeScript用）
+│   │   ├── Employee.ts
+│   │   ├── EvaluationItem.ts
+│   │   ├── Evaluation.ts
+│   │   ├── ThankYouMessage.ts
+│   │   └── FeedbackResult.ts
+│   │
+│   └── utils/                 # その他ユーティリティ
+│       ├── dateUtil.ts
+│       └── logger.ts
+│
+└── tests/                     # Jestによる単体テストコード
+    ├── handlers/
+    │   ├── employees/
+    │   ├── evaluationItems/
+    │   ├── evaluations/
+    │   ├── thankYouMessages/
+    │   └── feedbackResults/
+    └── libs/
+        ├── dynamoClient.test.ts
+        ├── response.test.ts
+        └── auth.test.ts
