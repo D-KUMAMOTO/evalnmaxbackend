@@ -1,0 +1,6 @@
+{
+    "pathParameters": {
+      "employee_id": "550e8400-e29b-41d4-a716-446655440000"
+    },
+    "body": "{\"employee_name\":\"山田 花子\",\"department_id\":\"dept-456\"}"
+}

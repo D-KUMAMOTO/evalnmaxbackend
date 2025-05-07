@@ -1,0 +1,6 @@
+{
+    "pathParameters": {
+      "evaluation_item_id": "59de5dbb-371e-4e34-94ca-44a4dcd87fae"
+    },
+    "body": "{\"evaluation_name\":\"図面を描画し単体部品を設計することができる\",\"evaluation_group\":\"技術スキル\"}"
+  }

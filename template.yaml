@@ -101,6 +101,7 @@ Resources:
   GetEmployeeFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/employees/getEmployee.handler
       Policies:
         - DynamoDBReadPolicy: { TableName: !Ref EmployeesTable }
@@ -114,6 +115,7 @@ Resources:
   CreateEmployeeFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/employees/createEmployee.handler
       Policies:
         - DynamoDBCrudPolicy: { TableName: !Ref EmployeesTable }
@@ -127,6 +129,7 @@ Resources:
   UpdateEmployeeFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/employees/updateEmployee.handler
       Policies:
         - DynamoDBCrudPolicy: { TableName: !Ref EmployeesTable }
@@ -142,6 +145,7 @@ Resources:
   ListEvaluationItemsFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/evaluationItems/listEvaluationItems.handler
       Policies:
         - DynamoDBReadPolicy: { TableName: !Ref EvaluationItemsTable }
@@ -155,6 +159,7 @@ Resources:
   CreateEvaluationItemFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/evaluationItems/createEvaluationItem.handler
       Policies:
         - DynamoDBCrudPolicy: { TableName: !Ref EvaluationItemsTable }
@@ -168,6 +173,7 @@ Resources:
   UpdateEvaluationItemFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/evaluationItems/updateEvaluationItem.handler
       Policies:
         - DynamoDBCrudPolicy: { TableName: !Ref EvaluationItemsTable }
@@ -183,6 +189,7 @@ Resources:
   ListEvaluationsFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/evaluations/listEvaluations.handler
       Policies:
         - DynamoDBReadPolicy: { TableName: !Ref EvaluationHistoryTable }
@@ -196,6 +203,7 @@ Resources:
   CreateEvaluationFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/evaluations/createEvaluation.handler
       Policies:
         - DynamoDBCrudPolicy: { TableName: !Ref EvaluationHistoryTable }
@@ -209,6 +217,7 @@ Resources:
   UpdateEvaluationFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/evaluations/updateEvaluation.handler
       Policies:
         - DynamoDBCrudPolicy: { TableName: !Ref EvaluationHistoryTable }
@@ -224,6 +233,7 @@ Resources:
   ListFeedbackResultsFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/feedbackResults/listFeedbackResults.handler
       Policies:
         - DynamoDBReadPolicy: { TableName: !Ref FeedbackResultsTable }
@@ -237,6 +247,7 @@ Resources:
   CreateFeedbackResultFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/feedbackResults/createFeedbackResult.handler
       Policies:
         - DynamoDBCrudPolicy: { TableName: !Ref FeedbackResultsTable }
@@ -250,6 +261,7 @@ Resources:
   UpdateFeedbackResultFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/feedbackResults/updateFeedbackResult.handler
       Policies:
         - DynamoDBCrudPolicy: { TableName: !Ref FeedbackResultsTable }
@@ -265,6 +277,7 @@ Resources:
   ListThankYouMessagesFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/thankYouMessages/listThankYouMessages.handler
       Policies:
         - DynamoDBReadPolicy: { TableName: !Ref ThankYouMessagesTable }
@@ -278,6 +291,7 @@ Resources:
   CreateThankYouMessageFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/thankYouMessages/createThankYouMessage.handler
       Policies:
         - DynamoDBCrudPolicy: { TableName: !Ref ThankYouMessagesTable }
@@ -291,6 +305,7 @@ Resources:
   UpdateThankYouMessageFunction:
     Type: AWS::Serverless::Function
     Properties:
+      CodeUri: dist/
       Handler: src/handlers/thankYouMessages/updateThankYouMessage.handler
       Policies:
         - DynamoDBCrudPolicy: { TableName: !Ref ThankYouMessagesTable }

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2015", "DOM"],
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node", "aws-lambda"],
+    "module": "commonjs",
+    "target": "es2015",
+    "outDir": "./dist",
+    "sourceMap": true,
+    "strict": true
+  }
+}
