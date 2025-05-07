@@ -28,10 +28,10 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     };
     
     const updatableFields = [
-      'receiver_employee_id',
+      'message_id',
       'message_content',
-      'category',
-      'is_public'
+      'message_date',
+      'status'
     ];
     
     updatableFields.forEach(field => {
@@ -46,7 +46,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         TableName: process.env.THANK_YOU_MESSAGES_TABLE!,
         Key: {
           sender_employee_id: data.sender_employee_id,
-          message_id: message_id
+          receiver_employee_id: data.receiver_employee_id
         },
         UpdateExpression: updateExpression,
         ExpressionAttributeValues: expressionAttributeValues,

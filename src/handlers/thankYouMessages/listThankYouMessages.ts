@@ -14,6 +14,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     const result = await docClient.send(
       new QueryCommand({
         TableName: process.env.THANK_YOU_MESSAGES_TABLE!,
+        IndexName: 'GSI1', // GSI1を使用して受信者IDでクエリ
         KeyConditionExpression: 'receiver_employee_id = :receiver_employee_id',
         ExpressionAttributeValues: {
           ':receiver_employee_id': employee_id,

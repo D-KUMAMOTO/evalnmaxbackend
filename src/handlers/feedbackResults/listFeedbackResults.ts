@@ -18,7 +18,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         ExpressionAttributeValues: {
           ':receiver_employee_id': employee_id,
         },
-        ScanIndexForward: false, // 降順（最新のフィードバックが先頭）
+        ScanIndexForward: false,
       })
     );
 

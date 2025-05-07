@@ -16,8 +16,8 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     }
     const data = JSON.parse(event.body);
     
-    if (!data.feedback_date) {
-      throw new ValidationError('Missing required field: feedback_date');
+    if (!data.evaluation_item_id) {
+      throw new ValidationError('Missing required field: evaluation_item_id');
     }
 
     const now = new Date().toISOString();
@@ -28,10 +28,11 @@ export const handler: APIGatewayProxyHandler = async (event) => {
     };
     
     const updatableFields = [
-      'feedback_content',
-      'rating',
-      'category',
-      'is_anonymous'
+      'feedback_score',
+      'feedback_comments',
+      'feedback_date',
+      'feedback_provider',
+      'department_id'
     ];
     
     updatableFields.forEach(field => {
@@ -46,7 +47,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         TableName: process.env.FEEDBACK_RESULTS_TABLE!,
         Key: {
           receiver_employee_id: employee_id,
-          feedback_date: data.feedback_date
+          evaluation_item_id: data.evaluation_item_id
         },
         UpdateExpression: updateExpression,
         ExpressionAttributeValues: expressionAttributeValues,
