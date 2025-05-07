@@ -1,0 +1,342 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless infra with explicit OPTIONS mock methods for CORS
+Globals:
+  Function:
+    Runtime: nodejs18.x
+    MemorySize: 128
+    Timeout: 3
+    Environment:
+      Variables:
+        EMPLOYEES_TABLE: !Ref EmployeesTable
+        EVAL_ITEMS_TABLE: !Ref EvaluationItemsTable
+        EVAL_HISTORY_TABLE: !Ref EvaluationHistoryTable
+        THANK_YOU_TABLE: !Ref ThankYouMessagesTable
+        FEEDBACK_TABLE: !Ref FeedbackResultsTable
+        DEPARTMENTS_TABLE: !Ref DepartmentsTable
+        COGNITO_POOL_ID: !Ref CognitoUserPoolId
+        COGNITO_REGION: !Ref AWS::Region
+        JWT_ISSUER: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${CognitoUserPoolId}"
+        JWT_AUDIENCE: !Ref CognitoClientId
+        LOG_LEVEL: info
+Resources:
+  # DynamoDB
+  EmployeesTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: employee_id
+        Type: String
+  EvaluationItemsTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: evaluation_item_id
+        Type: String
+  EvaluationHistoryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-EvaluationHistory'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: employee_id
+          AttributeType: S
+        - AttributeName: evaluation_date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: employee_id
+          KeyType: HASH
+        - AttributeName: evaluation_date
+          KeyType: RANGE
+  ThankYouMessagesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-ThankYouMessages'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: sender_employee_id
+          AttributeType: S
+        - AttributeName: message_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sender_employee_id
+          KeyType: HASH
+        - AttributeName: message_id
+          KeyType: RANGE
+  FeedbackResultsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${AWS::StackName}-FeedbackResults'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: receiver_employee_id
+          AttributeType: S
+        - AttributeName: feedback_date
+          AttributeType: S
+      KeySchema:
+        - AttributeName: receiver_employee_id
+          KeyType: HASH
+        - AttributeName: feedback_date
+          KeyType: RANGE
+  DepartmentsTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: department_id
+        Type: String
+
+  # API Gateway
+  EmployeeApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: false
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !Sub arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/${CognitoUserPoolId}
+
+  # Employees
+  GetEmployeeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/employees/getEmployee.handler
+      Policies:
+        - DynamoDBReadPolicy: { TableName: !Ref EmployeesTable }
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /employees/{employee_id}
+            Method: get
+  CreateEmployeeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/employees/createEmployee.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref EmployeesTable }
+      Events:
+        Post:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /employees
+            Method: post
+  UpdateEmployeeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/employees/updateEmployee.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref EmployeesTable }
+      Events:
+        Put:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /employees/{employee_id}
+            Method: put
+
+  # Evaluation Items
+  ListEvaluationItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/evaluationItems/listEvaluationItems.handler
+      Policies:
+        - DynamoDBReadPolicy: { TableName: !Ref EvaluationItemsTable }
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /evaluation-items
+            Method: get
+  CreateEvaluationItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/evaluationItems/createEvaluationItem.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref EvaluationItemsTable }
+      Events:
+        Post:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /evaluation-items
+            Method: post
+  UpdateEvaluationItemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/evaluationItems/updateEvaluationItem.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref EvaluationItemsTable }
+      Events:
+        Put:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /evaluation-items/{evaluation_item_id}
+            Method: put
+
+  # Evaluation History
+  ListEvaluationsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/evaluations/listEvaluations.handler
+      Policies:
+        - DynamoDBReadPolicy: { TableName: !Ref EvaluationHistoryTable }
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /evaluations/{employee_id}
+            Method: get
+  CreateEvaluationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/evaluations/createEvaluation.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref EvaluationHistoryTable }
+      Events:
+        Post:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /evaluations
+            Method: post
+  UpdateEvaluationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/evaluations/updateEvaluation.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref EvaluationHistoryTable }
+      Events:
+        Put:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /evaluations/{employee_id}
+            Method: put
+
+  # Feedback Results
+  ListFeedbackResultsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/feedbackResults/listFeedbackResults.handler
+      Policies:
+        - DynamoDBReadPolicy: { TableName: !Ref FeedbackResultsTable }
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /feedback-results/{employee_id}
+            Method: get
+  CreateFeedbackResultFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/feedbackResults/createFeedbackResult.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref FeedbackResultsTable }
+      Events:
+        Post:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /feedback-results
+            Method: post
+  UpdateFeedbackResultFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/feedbackResults/updateFeedbackResult.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref FeedbackResultsTable }
+      Events:
+        Put:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /feedback-results/{employee_id}
+            Method: put
+
+  # Thank You Messages
+  ListThankYouMessagesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/thankYouMessages/listThankYouMessages.handler
+      Policies:
+        - DynamoDBReadPolicy: { TableName: !Ref ThankYouMessagesTable }
+      Events:
+        Get:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /thank-you-messages/{employee_id}/list
+            Method: get
+  CreateThankYouMessageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/thankYouMessages/createThankYouMessage.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref ThankYouMessagesTable }
+      Events:
+        Post:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /thank-you-messages
+            Method: post
+  UpdateThankYouMessageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/thankYouMessages/updateThankYouMessage.handler
+      Policies:
+        - DynamoDBCrudPolicy: { TableName: !Ref ThankYouMessagesTable }
+      Events:
+        Put:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EmployeeApi
+            Path: /thank-you-messages/message/{message_id}
+            Method: put
+
+    # Mock OPTIONS methods per path
+  ApiOptionsEmployees:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref EmployeeApi
+      ResourceId: !GetAtt EmployeeApi.RootResourceId
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        PassthroughBehavior: WHEN_NO_MATCH
+        RequestTemplates:
+          application/json: '{ "statusCode": 200 }'
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,PUT,DELETE,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Headers: true
+
+Parameters:
+  CognitoUserPoolId:
+    Type: String
+    Description: Cognito User Pool ID for authentication
+  CognitoClientId:
+    Type: String
+    Description: Cognito App Client ID
+
+Outputs:
+  ApiUrl:
+    Description: "API Gateway endpoint URL for dev stage"
+    Value: !Sub "https://${EmployeeApi}.execute-api.${AWS::Region}.amazonaws.com/dev"
